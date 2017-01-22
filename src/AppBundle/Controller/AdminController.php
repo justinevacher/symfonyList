@@ -39,7 +39,6 @@ class AdminController extends Controller
     			$file->move($webRoot . '/uploads', $filename);
     			$show->setImage($filename);
     		}
-
     		$em = $this->get('doctrine')->getManager();
     		$em->persist($show);
     		$em->flush();
@@ -188,14 +187,6 @@ class AdminController extends Controller
     {
         $omdb = new OMDbAPI();
         $serie = $omdb->fetch('t', $t);
-//        $serieJson = json_decode($serie, true);
-//        var_dump($serie->data);
-//        var_dump($serie->data->Title);
-//        var_dump($serie->data->Plot);
-//        var_dump($serie->data->Poster);
-//        var_dump($serie->data->totalSeasons);
-//        var_dump($serie->data->seasons);
-        
         
         /*Create show*/
         $show = new TVShow;
@@ -203,31 +194,16 @@ class AdminController extends Controller
             ->setName($serie->data->Title)
             ->setSynopsis($serie->data->Plot);
 
-        
         if ($serie->data->Poster) {
-            $ext = explode(".", $serie->data->Poster);
-            $ext = $ext[count($ext)-1];
-
-            // Handling file upload
-            $filename = md5(uniqid()).'.'.$ext;
+            $partie_url = parse_url($serie->data->Poster);
+            $extention = ereg_replace("^.+\\.([^.]+)$", "\\1", $partie_url['path']);
+            $filename = md5(uniqid()).'.'.$extention;
             $webRoot = $this->get('kernel')->getRootDir().'/../web';
-
             copy($serie->data->Poster, $webRoot.'/uploads/'.$filename);
             $show->setImage($filename);
             
         }
-//        $file = $serie->data->Poster;
-//        if ($file) {
-//            // Handling file upload
-//            $filename = md5(uniqid()).'.'.$file->guessExtension();
-//            $webRoot = $this->get('kernel')->getRootDir().'/../web';
-//
-//            $file->move($webRoot . '/uploads', $filename);
-//            $show->setImage($filename);
-//        }
-        /*Create season*/
-        
-        
+                
         $em = $this->get('doctrine')->getManager();
         $em->persist($show);
         $em->flush();

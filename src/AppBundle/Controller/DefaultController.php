@@ -98,26 +98,29 @@ class DefaultController extends Controller
     {   
       
         $search = $request->get('search');
-        /*découpement des mots dans un tableau*/
         $words = str_word_count($search,1);
+        
         if($search && count($words)!=0){
             $em = $this->get('doctrine')->getManager();
             $repo = $em->getRepository('AppBundle:TVShow');
             $query = $repo->createQueryBuilder('s')
-                    ->where('s.name LIKE :key')
-                     ->setParameter(':key','%'.$words[0].'%');
+                    ->where('s.name LIKE :keyName')
+                    ->setParameter(':keyName','%'.$words[0].'%')
+                    ->orWhere('s.synopsis LIKE :keySynopsis')
+                    ->setParameter(':keySynopsis','%'.$words[0].'%');
 
             for($word=1;$word<count($words);$word++){
-                $query = $query->andWhere('s.name LIKE :key'.$word)
-                     ->setParameter(':key'.$word,'%'.$words[$word].'%');
+                $query = $query->orWhere('s.name LIKE :keyName'.$word)
+                     ->setParameter(':keyName'.$word,'%'.$words[$word].'%')
+                    ->orWhere('s.synopsis LIKE :keySynopsis'.$word)
+                    ->setParameter(':keySynopsis'.$word,'%'.$words[0].'%');
 
-            }
-                       
+            }  
+            
             $query = $query->orderBy('s.name', 'ASC')
                     ->getQuery();
             $shows = $query->getResult();
-           
-            
+        
             return [
                 'shows'=> $shows,
                 'search' => $search
