@@ -1,0 +1,30 @@
+
+{% extends 'AppBundle::layout.html.twig' %}
+
+{% block menu_home %}active{% endblock %}
+
+{% block contents %}
+ 
+    <section>
+        
+        <div class="container">
+            <div class="row">
+                <p>mots clés : 
+                    {% if search|default %}
+                        {{search}}
+                    {% endif %}
+                </p>
+                <h3>Les séries trouvées : </h3>
+                {% if shows|default %}
+                    {%for show in shows%}
+                      <div class="col-xs-12 col-md-6 col-lg-6" style="height:165px">
+                            <h4><a href="{{ path('show', {id: show.id}) }}">{{show.name}}</a></h4>
+                            <p>{{show.synopsis}}</p>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            </div>
+        </div>
+    </section>
+
+{% endblock %}
