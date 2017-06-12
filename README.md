@@ -67,3 +67,4 @@ Enjoy!
 [11]: https://symfony.com/doc/3.0/cookbook/logging/monolog.html
 [13]: https://symfony.com/doc/3.0/bundles/SensioGeneratorBundle/index.html
 # planning-series
+# symfonyList
